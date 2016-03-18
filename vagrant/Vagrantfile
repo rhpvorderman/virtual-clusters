@@ -69,6 +69,11 @@ Vagrant.configure(VAGRANTFILE_API) do |config|
   config.vm.define get_head_name() do |t|
   end
 
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "provision-head.yml"
+    ansible.host_key_checking = false
+  end
+
   # And do the same thing for all worker nodes
   (1..[1, NWORKERS.to_i].max).each do |n|
     worker_name = get_worker_name(n)

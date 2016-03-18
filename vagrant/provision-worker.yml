@@ -1,0 +1,5 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: add backports apt sources
+      apt_repository: repo="deb http://http.debian.net/debian jessie-backports main" state=present
