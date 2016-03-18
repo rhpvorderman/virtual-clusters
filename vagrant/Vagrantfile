@@ -1,0 +1,91 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API = 2
+
+# Common config values
+BASE_VM_NAME = "sge"
+BASE_VM_IP = "192.168.99"
+CONFIGS = {
+    vm_box: "debian/jessie64",
+    vm_disable_sync: true,
+    ssh_insert_key: false
+}
+
+# Config values for the head node
+IP = ENV["SGE_IP"] || "%s.%s" % [BASE_VM_IP, 100]
+MEM = ENV["SGE_MEM"] || "1024"
+CPU = ENV["SGE_CPU"] || "2"
+
+# Config values for the worker nodes
+NWORKERS = ENV["SGE_NWORKERS"] || "2"
+WORKER_MEM = ENV["SGE_WORKER_MEM"] || "512"
+WORKER_CPU = ENV["SGE_WORKER_CPU"] || "1"
+
+# Helper function for creating the head node name
+def get_head_name()
+    BASE_VM_NAME + "-head"
+end
+
+def get_worker_name(n)
+    BASE_VM_NAME + "-worker" + n.to_s.rjust(2, "0")
+end
+
+Vagrant.configure(VAGRANTFILE_API) do |config|
+
+  # We use Debian 8 64bit as the base image.
+  config.vm.box = CONFIGS[:vm_box]
+
+  # Default head node hostname.
+  config.vm.hostname = get_head_name()
+
+  # Disable shared folder.
+  config.vm.synced_folder ".", "/vagrant", :disabled => CONFIGS[:vm_disable_sync]
+
+  # Disable automatic keypair insertion.
+  config.ssh.insert_key = CONFIGS[:ssh_insert_key]
+
+  # Disable automatic box update checking. If you disable this, then
+  # boxes will only be checked for updates when the user runs
+  # `vagrant box outdated`. This is not recommended.
+  # config.vm.box_check_update = false
+
+  # Create a private network, which allows host-only access to the machine
+  # using a specific IP.
+  config.vm.network "private_network", ip: IP
+
+  # Provider-specific configuration so you can fine-tune various
+  # backing providers for Vagrant. These expose provider-specific options.
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui = false
+    # Set name in VirtualBox.
+    vb.name = get_head_name()
+    # Apply resource customizations.
+    vb.customize ["modifyvm", :id, "--memory", MEM.to_i]
+    vb.customize ["modifyvm", :id, "--cpus", CPU.to_i]
+  end
+
+  # Set name for Vagrant.
+  config.vm.define get_head_name() do |t|
+  end
+
+  # And do the same thing for all worker nodes
+  (1..[1, NWORKERS.to_i].max).each do |n|
+    worker_name = get_worker_name(n)
+    config.vm.define worker_name do |worker|
+      worker.vm.box = CONFIGS[:vm_box]
+      worker.vm.hostname = worker_name
+      worker.vm.synced_folder ".", "/vagrant", :disabled => CONFIGS[:vm_disable_sync]
+      worker.ssh.insert_key = CONFIGS[:ssh_insert_key]
+      worker.vm.network "private_network", ip: BASE_VM_IP + "." + (100 + n).to_s
+      worker.vm.provider "virtualbox" do |vb|
+        vb.gui = false
+        vb.name = worker_name
+        vb.customize ["modifyvm", :id, "--memory", WORKER_MEM.to_i]
+        vb.customize ["modifyvm", :id, "--cpus", WORKER_CPU.to_i]
+      end
+      worker.vm.define worker_name do |t|
+      end
+    end
+  end
+end
