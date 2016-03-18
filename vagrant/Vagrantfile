@@ -53,10 +53,6 @@ Vagrant.configure(VAGRANTFILE_API) do |config|
     end
     head.vm.define head_name do |t|
     end
-    head.vm.provision "ansible" do |ansible|
-      ansible.playbook = "provision-head.yml"
-      ansible.host_key_checking = false
-    end
   end
 
   # And do the same thing for all worker nodes
@@ -75,9 +71,18 @@ Vagrant.configure(VAGRANTFILE_API) do |config|
       worker.vm.define worker_name do |t|
       end
 
-      worker.vm.provision "ansible" do |ansible|
-        ansible.playbook = "provision-worker.yml"
-        ansible.host_key_checking = false
+      # Set up provisioning once when all nodes have been setup
+      # https://www.vagrantup.com/docs/provisioning/ansible.html
+      if n == N
+        worker.vm.provision "ansible" do |ansible|
+          ansible.limit = "all"
+          ansible.playbook = "provision.yml"
+          ansible.host_key_checking = false
+          ansible.groups = {
+            "head"    => [head_name],
+            "workers" => (1..N).map { |w| get_worker_name(w) }
+          }
+        end
       end
     end
   end
