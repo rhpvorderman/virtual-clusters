@@ -6,13 +6,50 @@
     - name: add backports apt sources
       apt_repository: repo="deb http://http.debian.net/debian jessie-backports main" state=present
 
-- hosts: head
-  become: yes
-  gather_facts: false
-  tasks:
-
     - name: install system dependencies
       apt: pkg={{ item }} state=present update_cache=yes cache_valid_time=3600
       with_items:
         - apt-transport-https
         - ca-certificates
+        - build-essential
+        - git
+        - openjdk-8-jre-headless
+        - openjdk-8-jdk
+
+
+- hosts: head
+  become: yes
+  gather_facts: false
+  tasks:
+
+    - name: add user group
+      group: name={{ sge_group }} state=present
+
+    - name: add user account
+      user: name={{ sge_user }} group={{ sge_group }} shell=/bin/bash state=present
+
+    - name: ensure working directory exists
+      file: path=/opt/sge state=directory owner={{ sge_user }} group={{ sge_group }} mode=0755
+
+    - name: set expected download filename
+      set_fact: sge_source_pkg=/opt/sge/{{ sge_version }}.tar.gz
+
+    - name: download source code
+      become_user: "{{ sge_group }}"
+      get_url:
+        url=http://downloads.sourceforge.net/project/gridscheduler/{{ sge_version }}/{{ sge_version }}.tar.gz
+        dest={{ sge_source_pkg }}
+
+    - name: unpack source code
+      unarchive:
+        copy=no
+        src={{ sge_source_pkg }}
+        dest={{ sge_source_pkg|dirname }}
+        creates={{ sge_source_pkg|dirname }}/{{ sge_version }}/Changelog
+        owner={{ sge_user }}
+        group={{ sge_group }}
+
+  vars:
+    - sge_group: sge
+    - sge_user: sge
+    - sge_version: GE2011.11p1
