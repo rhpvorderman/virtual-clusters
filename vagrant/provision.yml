@@ -20,6 +20,8 @@
 - hosts: head
   become: yes
   gather_facts: false
+  roles:
+    - nfs
   tasks:
 
     - name: add user group
@@ -35,7 +37,7 @@
       set_fact: ogs_source_pkg=/nfs/ogs/src/{{ ogs_version }}.tar.gz
 
     - name: download source code
-      become_user: "{{ ogs_group }}"
+      become_user: "{{ ogs_admin_user }}"
       get_url:
         url=http://downloads.sourceforge.net/project/gridscheduler/{{ ogs_version }}/{{ ogs_version }}.tar.gz
         dest={{ ogs_source_pkg }}
@@ -53,3 +55,4 @@
     - ogs_group: ogs
     - ogs_admin_user: ogsadmin
     - ogs_version: GE2011.11p1
+    - nfs_exports: ["/nfs/ogs *(rw,sync,no_subtree_check)"]
