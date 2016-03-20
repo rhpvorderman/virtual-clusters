@@ -25,14 +25,14 @@
     - name: add user group
       group: name={{ ogs_group }} state=present
 
-    - name: add user account
-      user: name={{ ogs_user }} group={{ ogs_group }} shell=/bin/bash state=present
+    - name: add admin user account
+      user: name={{ ogs_admin_user }} group={{ ogs_group }} shell=/bin/bash state=present
 
     - name: ensure working directory exists
-      file: path=/opt/ogs state=directory owner={{ ogs_user }} group={{ ogs_group }} mode=0755
+      file: path=/nfs/ogs/src state=directory owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0755
 
     - name: set expected download filename
-      set_fact: ogs_source_pkg=/opt/ogs/{{ ogs_version }}.tar.gz
+      set_fact: ogs_source_pkg=/nfs/ogs/src/{{ ogs_version }}.tar.gz
 
     - name: download source code
       become_user: "{{ ogs_group }}"
@@ -46,10 +46,10 @@
         src={{ ogs_source_pkg }}
         dest={{ ogs_source_pkg|dirname }}
         creates={{ ogs_source_pkg|dirname }}/{{ ogs_version }}/Changelog
-        owner={{ ogs_user }}
+        owner={{ ogs_admin_user }}
         group={{ ogs_group }}
 
   vars:
     - ogs_group: ogs
-    - ogs_user: ogs
+    - ogs_admin_user: ogsadmin
     - ogs_version: GE2011.11p1
