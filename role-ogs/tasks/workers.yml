@@ -1,0 +1,4 @@
+---
+
+- name: authorize admin user key in worker nodes
+  authorized_key: user={{ ogs_admin_user }} key="{{ lookup('file', ogs_admin_public_key) }}"

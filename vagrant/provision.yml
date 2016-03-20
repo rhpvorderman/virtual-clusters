@@ -1,6 +1,5 @@
 - hosts: all
   become: yes
-  gather_facts: false
   tasks:
     - include_vars: roles/ogs/defaults/main.yml
     - include: roles/ogs/tasks/common.yml
@@ -13,3 +12,10 @@
   tasks:
     - include_vars: roles/ogs/defaults/main.yml
     - include: roles/ogs/tasks/head.yml
+
+- hosts: workers
+  become: yes
+  gather_facts: false
+  tasks:
+    - include_vars: roles/ogs/defaults/main.yml
+    - include: roles/ogs/tasks/workers.yml

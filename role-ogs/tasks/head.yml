@@ -1,5 +1,8 @@
 ---
 
+- name: set known hosts
+  template: src=templates/known_hosts.j2 dest="/home/{{ ogs_admin_user }}/.ssh/known_hosts" owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0644
+
 - name: ensure working directory exists
   file: path=/nfs/ogs/src state=directory owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0755
 

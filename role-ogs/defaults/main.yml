@@ -4,6 +4,10 @@ ogs_uid: 1500
 ogs_gid: 1500
 ogs_group: ogs
 ogs_admin_user: ogs-admin
+#ogs_admin_private_key: /home/bow/devel/projects/main/ansible-role-sge/role-ogs/files/ogs-admin_rsa
+#ogs_admin_public_key: /home/bow/devel/projects/main/ansible-role-sge/role-ogs/files/ogs-admin_rsa.pub
+ogs_admin_private_key: files/ogs-admin_rsa
+ogs_admin_public_key: files/ogs-admin_rsa.pub
 ogs_version: GE2011.11p1
 nfs_exports:
   - "/nfs/ogs *(rw,sync,no_subtree_check)"
