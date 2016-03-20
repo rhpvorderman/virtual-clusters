@@ -1,4 +1,15 @@
 ---
 
+- name: install system dependencies
+  apt: pkg={{ item }} state=present update_cache=yes cache_valid_time=3600
+  with_items:
+    - nfs-common
+
 - name: authorize admin user key in worker nodes
   authorized_key: user={{ ogs_admin_user }} key="{{ lookup('file', ogs_admin_public_key) }}"
+
+- name: ensure mount point for nfs exists
+  file: path=/nfs/ogs state=directory owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0755
+
+- name: mount nfs
+  mount: name=/nfs/ogs fstype=nfs src="{{ hostvars[groups['head'][0]].ansible_eth1.ipv4.address }}:/nfs/ogs" state=mounted
