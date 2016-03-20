@@ -23,33 +23,33 @@
   tasks:
 
     - name: add user group
-      group: name={{ sge_group }} state=present
+      group: name={{ ogs_group }} state=present
 
     - name: add user account
-      user: name={{ sge_user }} group={{ sge_group }} shell=/bin/bash state=present
+      user: name={{ ogs_user }} group={{ ogs_group }} shell=/bin/bash state=present
 
     - name: ensure working directory exists
-      file: path=/opt/sge state=directory owner={{ sge_user }} group={{ sge_group }} mode=0755
+      file: path=/opt/ogs state=directory owner={{ ogs_user }} group={{ ogs_group }} mode=0755
 
     - name: set expected download filename
-      set_fact: sge_source_pkg=/opt/sge/{{ sge_version }}.tar.gz
+      set_fact: ogs_source_pkg=/opt/ogs/{{ ogs_version }}.tar.gz
 
     - name: download source code
-      become_user: "{{ sge_group }}"
+      become_user: "{{ ogs_group }}"
       get_url:
-        url=http://downloads.sourceforge.net/project/gridscheduler/{{ sge_version }}/{{ sge_version }}.tar.gz
-        dest={{ sge_source_pkg }}
+        url=http://downloads.sourceforge.net/project/gridscheduler/{{ ogs_version }}/{{ ogs_version }}.tar.gz
+        dest={{ ogs_source_pkg }}
 
     - name: unpack source code
       unarchive:
         copy=no
-        src={{ sge_source_pkg }}
-        dest={{ sge_source_pkg|dirname }}
-        creates={{ sge_source_pkg|dirname }}/{{ sge_version }}/Changelog
-        owner={{ sge_user }}
-        group={{ sge_group }}
+        src={{ ogs_source_pkg }}
+        dest={{ ogs_source_pkg|dirname }}
+        creates={{ ogs_source_pkg|dirname }}/{{ ogs_version }}/Changelog
+        owner={{ ogs_user }}
+        group={{ ogs_group }}
 
   vars:
-    - sge_group: sge
-    - sge_user: sge
-    - sge_version: GE2011.11p1
+    - ogs_group: ogs
+    - ogs_user: ogs
+    - ogs_version: GE2011.11p1

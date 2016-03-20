@@ -1,3 +1,3 @@
-# Ansible Role: Sun Grid Engine
+# Ansible Role: Open Grid Scheduler
 
-Ansible role for setting up a Sun Grid Engine Cluster.
+Ansible role for setting up a Open Grid Scheduler cluster.

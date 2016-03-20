@@ -4,18 +4,18 @@
 VAGRANTFILE_API = 2
 
 # Common config values
-BASE_VM_NAME = "sge"
+BASE_VM_NAME = "ogs"
 BASE_VM_IP = "192.168.99"
 
 # Config values for the head node
-IP = ENV["SGE_IP"] || "%s.%s" % [BASE_VM_IP, 100]
-MEM = ENV["SGE_MEM"] || "1024"
-CPU = ENV["SGE_CPU"] || "2"
+IP = ENV["OGS_IP"] || "%s.%s" % [BASE_VM_IP, 100]
+MEM = ENV["OGS_MEM"] || "1024"
+CPU = ENV["OGS_CPU"] || "2"
 
 # Config values for the worker nodes
-NWORKERS = ENV["SGE_NWORKERS"] || "2"
-WORKER_MEM = ENV["SGE_WORKER_MEM"] || "512"
-WORKER_CPU = ENV["SGE_WORKER_CPU"] || "1"
+NWORKERS = ENV["OGS_NWORKERS"] || "2"
+WORKER_MEM = ENV["OGS_WORKER_MEM"] || "512"
+WORKER_CPU = ENV["OGS_WORKER_CPU"] || "1"
 
 # Helper function for creating the head node name
 def get_head_name()
