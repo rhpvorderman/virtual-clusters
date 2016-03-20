@@ -1,0 +1,29 @@
+---
+
+- name: add backports apt sources
+  apt_repository: repo="deb http://http.debian.net/debian jessie-backports main" state=present
+
+- name: install system dependencies
+  apt: pkg={{ item }} state=present update_cache=yes cache_valid_time=3600
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - build-essential
+    - git
+    - openjdk-8-jre-headless
+    - openjdk-8-jdk
+
+- name: add user group
+  group:
+    name={{ ogs_group }}
+    gid={{ ogs_gid }}
+    state=present
+
+- name: add admin user account
+  user:
+    name={{ ogs_admin_user }}
+    uid={{ ogs_uid }}
+    group={{ ogs_group }}
+    shell=/bin/bash
+    state=present
+    generate_ssh_key="{% if 'workers' in group_names%}no{% else %}yes{% endif %}"

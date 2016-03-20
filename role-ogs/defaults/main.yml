@@ -1,0 +1,9 @@
+---
+
+ogs_uid: 1500
+ogs_gid: 1500
+ogs_group: ogs
+ogs_admin_user: ogs-admin
+ogs_version: GE2011.11p1
+nfs_exports:
+  - "/nfs/ogs *(rw,sync,no_subtree_check)"

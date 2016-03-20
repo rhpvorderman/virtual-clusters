@@ -2,20 +2,8 @@
   become: yes
   gather_facts: false
   tasks:
-
-    - name: add backports apt sources
-      apt_repository: repo="deb http://http.debian.net/debian jessie-backports main" state=present
-
-    - name: install system dependencies
-      apt: pkg={{ item }} state=present update_cache=yes cache_valid_time=3600
-      with_items:
-        - apt-transport-https
-        - ca-certificates
-        - build-essential
-        - git
-        - openjdk-8-jre-headless
-        - openjdk-8-jdk
-
+    - include_vars: roles/ogs/defaults/main.yml
+    - include: roles/ogs/tasks/common.yml
 
 - hosts: head
   become: yes
@@ -23,36 +11,5 @@
   roles:
     - nfs
   tasks:
-
-    - name: add user group
-      group: name={{ ogs_group }} state=present
-
-    - name: add admin user account
-      user: name={{ ogs_admin_user }} group={{ ogs_group }} shell=/bin/bash state=present
-
-    - name: ensure working directory exists
-      file: path=/nfs/ogs/src state=directory owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0755
-
-    - name: set expected download filename
-      set_fact: ogs_source_pkg=/nfs/ogs/src/{{ ogs_version }}.tar.gz
-
-    - name: download source code
-      become_user: "{{ ogs_admin_user }}"
-      get_url:
-        url=http://downloads.sourceforge.net/project/gridscheduler/{{ ogs_version }}/{{ ogs_version }}.tar.gz
-        dest={{ ogs_source_pkg }}
-
-    - name: unpack source code
-      unarchive:
-        copy=no
-        src={{ ogs_source_pkg }}
-        dest={{ ogs_source_pkg|dirname }}
-        creates={{ ogs_source_pkg|dirname }}/{{ ogs_version }}/Changelog
-        owner={{ ogs_admin_user }}
-        group={{ ogs_group }}
-
-  vars:
-    - ogs_group: ogs
-    - ogs_admin_user: ogsadmin
-    - ogs_version: GE2011.11p1
-    - nfs_exports: ["/nfs/ogs *(rw,sync,no_subtree_check)"]
+    - include_vars: roles/ogs/defaults/main.yml
+    - include: roles/ogs/tasks/head.yml

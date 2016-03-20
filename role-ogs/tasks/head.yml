@@ -1,0 +1,22 @@
+---
+
+- name: ensure working directory exists
+  file: path=/nfs/ogs/src state=directory owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0755
+
+- name: set expected download filename
+  set_fact: ogs_source_pkg=/nfs/ogs/src/{{ ogs_version }}.tar.gz
+
+- name: download source code
+  become_user: "{{ ogs_admin_user }}"
+  get_url:
+    url=http://downloads.sourceforge.net/project/gridscheduler/{{ ogs_version }}/{{ ogs_version }}.tar.gz
+    dest={{ ogs_source_pkg }}
+
+- name: unpack source code
+  unarchive:
+    copy=no
+    src={{ ogs_source_pkg }}
+    dest={{ ogs_source_pkg|dirname }}
+    creates={{ ogs_source_pkg|dirname }}/{{ ogs_version }}/Changelog
+    owner={{ ogs_admin_user }}
+    group={{ ogs_group }}
