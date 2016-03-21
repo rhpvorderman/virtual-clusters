@@ -1,3 +1,3 @@
-# Ansible Role: Open Grid Scheduler
+# Virtual Clusters
 
-Ansible role for setting up a Open Grid Scheduler cluster.
+Recipes for setting up a local virtual cluster using specific scheduling engines.
