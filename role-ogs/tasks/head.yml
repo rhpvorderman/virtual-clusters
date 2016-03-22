@@ -3,6 +3,45 @@
 - name: set known hosts
   template: src=templates/known_hosts.j2 dest="/home/{{ ogs_admin_user }}/.ssh/known_hosts" owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0644
 
+- name: ensure working directory for BerkeleyDB setup exists
+  file: path=/opt/berkeleydb state=directory owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0755
+
+- name: download BerkeleyDB source
+  get_url:
+    url=http://download.oracle.com/berkeley-db/db-4.4.20.tar.gz
+    dest=/opt/berkeleydb/db-4.4.20.tar.gz
+
+- name: unpack BerkeleyDB source
+  unarchive:
+    copy=no
+    src=/opt/berkeleydb/db-4.4.20.tar.gz
+    dest=/opt/berkeleydb
+    creates=/opt/berkeleydb/db-4.4.20/README
+    owner={{ ogs_admin_user }}
+    group={{ ogs_group }}
+
+- name: create BerkeleyDB build directory
+  file: path=/opt/berkeleydb/db-4.4.20/build state=directory owner={{ ogs_admin_user }} group={{ ogs_group }}
+
+- name: configure BerkeleyDB
+  shell: ../dist/configure --enable-rpc
+  args:
+    chdir: /opt/berkeleydb/db-4.4.20/build
+    creates: /opt/berkeleydb/db-4.4.20/build/Makefile
+
+- name: compile BerkeleyDB
+  shell: make
+  args:
+    chdir: /opt/berkeleydb/db-4.4.20/build
+    creates: /opt/berkeleydb/db-4.4.20/build/db_verify
+
+- name: install BerkeleyDB
+  become: yes
+  shell: make install
+  args:
+    chdir: /opt/berkeleydb/db-4.4.20/build
+    creates: /usr/local/BerkeleyDB.4.4/bin/db_verify
+
 - name: ensure nfs share exists
   file: path=/nfs/ogs state=directory owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0755
 
