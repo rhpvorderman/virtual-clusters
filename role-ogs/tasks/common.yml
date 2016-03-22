@@ -1,17 +1,33 @@
 ---
 
-- name: add backports apt sources
-  apt_repository: repo="deb http://http.debian.net/debian jessie-backports main" state=present
+- name: add additional apt sources
+  apt_repository: repo={{ item }} state=present
+  with_items:
+    - "deb http://httpredir.debian.org/debian wheezy main"
+    - "deb-src http://httpredir.debian.org/debian wheezy main"
 
-- name: install system dependencies
+- name: install build dependencies
   apt: pkg={{ item }} state=present update_cache=yes cache_valid_time=3600
   with_items:
+    - ant
     - apt-transport-https
     - ca-certificates
     - build-essential
     - git
-    - openjdk-8-jre-headless
-    - openjdk-8-jdk
+    - javacc
+    - junit
+    - libxext-dev
+    - libxft-dev
+    - libmotif-dev
+    - libncurses-dev
+    - libpam0g-dev
+    - libreadline-dev
+    - libssl-dev
+    - libxp-dev
+    - libxpm-dev
+    - libxmu-dev
+    - texinfo=4.13a.dfsg.1-10
+    - openjdk-7-jdk
 
 - name: add user group
   group:
