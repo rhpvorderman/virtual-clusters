@@ -132,8 +132,16 @@
     creates: "{{ ogs_source_dir }}/clients/qacct/qacct_dependencies"
     executable: /bin/bash
 
+- name: ensure ncurses is listed as linked library for qtcsh
+  lineinfile:
+    backup=yes
+    state=present
+    dest={{ ogs_source_dir }}/aimk
+    regexp='^   set SGE_LIBS = "-lsge -lpthread'
+    line='   set SGE_LIBS = "-lsge -lpthread -lncurses"'
+
 - name: compile executables
-  shell: ./aimk -sys-libssl -no-qtcsh
+  shell: ./aimk -sys-libssl
   args:
     chdir: "{{ ogs_source_dir }}"
     creates: "{{ ogs_source_dir }}/3rdparty/qmake/LINUXX64/make"
