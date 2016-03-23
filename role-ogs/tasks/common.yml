@@ -12,6 +12,7 @@
     - ant
     - apt-transport-https
     - ca-certificates
+    - csh
     - build-essential
     - git
     - javacc

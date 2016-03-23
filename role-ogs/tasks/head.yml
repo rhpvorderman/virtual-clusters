@@ -42,6 +42,23 @@
     chdir: /opt/berkeleydb/db-4.4.20/build
     creates: /usr/local/BerkeleyDB.4.4/bin/db_verify
 
+- name: ensure directory for IzPack exists
+  file: path=/opt/izpack state=directory owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0755
+
+- name: download IzPack
+  get_url:
+    url=http://bioteam.net/wp-content/uploads/misc/Izpack-1.4.4.tar.gz
+    dest=/opt/izpack/Izpack-1.4.4.tar.gz
+
+- name: unpack IzPack
+  unarchive:
+    copy=no
+    src=/opt/izpack/Izpack-1.4.4.tar.gz
+    dest=/opt/izpack
+    creates=/opt/izpack/Izpack-1.4.4/swing-layout-1.0.3.jar
+    owner={{ ogs_admin_user }}
+    group={{ ogs_group }}
+
 - name: ensure nfs share exists
   file: path=/nfs/ogs state=directory owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0755
 
@@ -50,6 +67,9 @@
 
 - name: set expected download filename
   set_fact: ogs_source_pkg=/nfs/ogs/src/{{ ogs_version }}.tar.gz
+
+- name: set expected source directory
+  set_fact: ogs_source_dir={{ ogs_source_pkg|dirname }}/{{ ogs_version }}/source
 
 - name: download source code
   become_user: "{{ ogs_admin_user }}"
@@ -65,3 +85,63 @@
     creates={{ ogs_source_pkg|dirname }}/{{ ogs_version }}/Changelog
     owner={{ ogs_admin_user }}
     group={{ ogs_group }}
+
+- name: ensure IzPack path in build.properties is correct
+  lineinfile:
+    backup=yes
+    state=present
+    dest={{ ogs_source_dir }}/build.properties
+    regexp="^izpack.home="
+    line="izpack.home=/opt/izpack/Izpack-1.4.4"
+
+- name: ensure Swing path in GUI installer project.properties is correct
+  lineinfile:
+    backup=yes
+    state=present
+    dest={{ ogs_source_dir }}/clients/gui-installer/nbproject/project.properties
+    regexp="^libs.swing-layout.classpath="
+    line="libs.swing-layout.classpath=${izpack.home}/swing-layout-1.0.3.jar"
+
+- name: ensure ANT path in GUI installer project.properties is correct
+  lineinfile:
+    backup=yes
+    state=present
+    dest={{ ogs_source_dir }}/clients/gui-installer/nbproject/project.properties
+    regexp="^libs.ant.classpath="
+    line="libs.ant.classpath=${izpack.home}/ant.jar"
+
+- name: copy aimk.private file
+  copy:
+    src=files/aimk.private
+    dest={{ ogs_source_dir }}/aimk.private
+    owner={{ ogs_admin_user }}
+    group={{ ogs_group }}
+    mode=0644
+
+- name: build sge_depend
+  shell: ./aimk -only-depend
+  args:
+    chdir: "{{ ogs_source_dir }}"
+    creates: "{{ ogs_source_dir }}/3rdparty/sge_depend/LINUXX64/sge_depend"
+    executable: /bin/bash
+
+- name: create dependency files
+  shell: scripts/zerodepend && ./aimk depend
+  args:
+    chdir: "{{ ogs_source_dir }}"
+    creates: "{{ ogs_source_dir }}/clients/qacct/qacct_dependencies"
+    executable: /bin/bash
+
+- name: compile executables
+  shell: ./aimk -sys-libssl -no-qtcsh
+  args:
+    chdir: "{{ ogs_source_dir }}"
+    creates: "{{ ogs_source_dir }}/3rdparty/qmake/LINUXX64/make"
+    executable: /bin/bash
+
+- name: create man pages
+  shell: ./aimk -man
+  args:
+    chdir: "{{ ogs_source_dir }}"
+    creates: "{{ ogs_source_dir }}/MANSBUILD_ge/ASCMAN/man/man8/sge_st"
+    executable: /bin/bash
