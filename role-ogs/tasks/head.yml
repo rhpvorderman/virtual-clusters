@@ -63,10 +63,10 @@
   file: path=/nfs/ogs state=directory owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0755
 
 - name: ensure working directory exists
-  file: path=/nfs/ogs/src state=directory owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0755
+  file: path=/opt/ogs state=directory owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0755
 
 - name: set expected download filename
-  set_fact: ogs_source_pkg=/nfs/ogs/src/{{ ogs_version }}.tar.gz
+  set_fact: ogs_source_pkg=/opt/ogs/{{ ogs_version }}.tar.gz
 
 - name: set expected source directory
   set_fact: ogs_source_dir={{ ogs_source_pkg|dirname }}/{{ ogs_version }}/source
