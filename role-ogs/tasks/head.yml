@@ -153,3 +153,25 @@
     chdir: "{{ ogs_source_dir }}"
     creates: "{{ ogs_source_dir }}/MANSBUILD_ge/ASCMAN/man/man8/sge_st"
     executable: /bin/bash
+
+- name: copy distinst.private file
+  copy:
+    src=files/distinst.private
+    dest={{ ogs_source_dir }}/distinst.private
+    owner={{ ogs_admin_user }}
+    group={{ ogs_group }}
+    mode=0644
+
+- name: copy ogs.sh file
+  copy:
+    src=files/ogs.sh
+    dest=/etc/profile.d/ogs.sh
+
+- name: install executables
+  shell: ./scripts/distinst -local -allall -noexit -y linux-x64
+  args:
+    chdir: "{{ ogs_source_dir }}"
+    creates: /nfs/ogs/bin/linux-x64/qstat
+    executable: /bin/bash
+  environment:
+    SGE_ROOT: /nfs/ogs
