@@ -11,3 +11,19 @@ ogs_admin_public_key: files/ogs-admin_rsa.pub
 ogs_version: GE2011.11p1
 nfs_exports:
   - "/nfs/ogs *(rw,sync,no_subtree_check)"
+
+ogs_sge_root: /nfs/ogs
+ogs_sge_qmaster_port: 6444
+ogs_sge_execd_port: 6445
+ogs_sge_cluster_name: "virtual-ogs"
+ogs_qmaster_spool_dir: "/nfs/ogs/default/spool/master"
+ogs_execd_spool_dir: "/nfs/ogs/default/spool/execd"
+ogs_gid_range: "800000-10000000"
+ogs_db_spooling_dir: "/tmp/data/spooldb"
+ogs_admin_host_list: ["ogs-head"]
+ogs_submit_host_list: ["ogs-head"]
+ogs_exec_host_list: ["ogs-worker01", "ogs-worker02"]
+ogs_execd_spool_dir_local: ""
+ogs_default_domain: "virtual-ogs"
+ogs_shadow_host: ""
+ogs_exec_host_list_rm: ""

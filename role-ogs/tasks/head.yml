@@ -175,3 +175,11 @@
     executable: /bin/bash
   environment:
     SGE_ROOT: /nfs/ogs
+
+- name: copy setup configuration
+  template:
+    src=templates/inst_template.conf.j2
+    dest=/nfs/ogs/inst_config.txt
+    owner={{ ogs_admin_user }}
+    group={{ ogs_group }}
+    mode=0644
