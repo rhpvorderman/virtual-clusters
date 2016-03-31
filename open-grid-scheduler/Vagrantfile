@@ -43,7 +43,7 @@ Vagrant.configure(VAGRANTFILE_API) do |config|
   # Set up head node
   head_name = get_head_name()
   config.vm.define head_name do |head|
-    head.vm.provision :hosts, :sync_hosts => true
+    head.vm.provision :hosts, :sync_hosts => true, :add_localhost_hostnames => false
     head.vm.hostname = head_name
     head.vm.network "private_network", ip: IP
     head.vm.provider "virtualbox" do |vb|
@@ -61,7 +61,7 @@ Vagrant.configure(VAGRANTFILE_API) do |config|
   (1..N).each do |n|
     worker_name = get_worker_name(n)
     config.vm.define worker_name do |worker|
-      worker.vm.provision :hosts, :sync_hosts => true
+      worker.vm.provision :hosts, :sync_hosts => true, :add_localhost_hostnames => false
       worker.vm.hostname = worker_name
       worker.vm.network "private_network", ip: BASE_VM_IP + "." + (100 + n).to_s
       worker.vm.provider "virtualbox" do |vb|
