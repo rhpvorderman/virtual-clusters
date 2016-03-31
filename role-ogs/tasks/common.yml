@@ -48,7 +48,7 @@
   file: path="/home/{{ ogs_admin_user }}/.ssh" state=directory owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0755
 
 - name: copy SSH private key
-  copy: src="{{ ogs_admin_private_key }}" dest="/home/{{ ogs_admin_user }}/.ssh/ogs-admin_rsa" owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0600
+  copy: src="{{ ogs_admin_private_key }}" dest="/home/{{ ogs_admin_user }}/.ssh/id_rsa" owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0600
 
 - name: copy SSH public key
-  copy: src="{{ ogs_admin_public_key }}" dest="/home/{{ ogs_admin_user }}/.ssh/ogs-admin_rsa.pub" owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0644
+  copy: src="{{ ogs_admin_public_key }}" dest="/home/{{ ogs_admin_user }}/.ssh/id_rsa.pub" owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0644
