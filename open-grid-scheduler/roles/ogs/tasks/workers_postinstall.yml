@@ -1,0 +1,19 @@
+---
+
+- name: copy setup configuration
+  template:
+    src=templates/inst_template.conf.j2
+    dest=/nfs/ogs/inst_config.txt
+    owner={{ ogs_admin_user }}
+    group={{ ogs_group }}
+    mode=0644
+
+- name: setup sge_execd
+  shell: ./inst_sge -x -noremote -auto ./inst_config.txt
+  args:
+    chdir: /nfs/ogs
+    creates: "/nfs/ogs/{{ ogs_cell_name|default('default') }}/spool/execd/{{ inventory_hostname }}"
+    executable: /bin/bash
+  environment:
+    SGE_ROOT: /nfs/ogs
+    SGE_ARCH: linux-x64

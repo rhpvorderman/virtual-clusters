@@ -1,8 +1,5 @@
 ---
 
-- name: set known hosts
-  template: src=templates/known_hosts.j2 dest="/home/{{ ogs_admin_user }}/.ssh/known_hosts" owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0644
-
 - name: ensure working directory for BerkeleyDB setup exists
   file: path=/opt/berkeleydb state=directory owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0755
 
@@ -162,11 +159,6 @@
     group={{ ogs_group }}
     mode=0644
 
-- name: copy ogs.sh file
-  copy:
-    src=files/ogs.sh
-    dest=/etc/profile.d/ogs.sh
-
 - name: install executables
   shell: ./scripts/distinst -local -allall -noexit -y linux-x64
   args:
@@ -175,11 +167,3 @@
     executable: /bin/bash
   environment:
     SGE_ROOT: /nfs/ogs
-
-- name: copy setup configuration
-  template:
-    src=templates/inst_template.conf.j2
-    dest=/nfs/ogs/inst_config.txt
-    owner={{ ogs_admin_user }}
-    group={{ ogs_group }}
-    mode=0644

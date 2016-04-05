@@ -19,3 +19,17 @@
   tasks:
     - include_vars: roles/ogs/defaults/main.yml
     - include: roles/ogs/tasks/workers.yml
+
+- hosts: head
+  become: yes
+  gather_facts: false
+  tasks:
+    - include_vars: roles/ogs/defaults/main.yml
+    - include: roles/ogs/tasks/head_postinstall.yml
+
+- hosts: workers
+  become: yes
+  gather_facts: false
+  tasks:
+    - include_vars: roles/ogs/defaults/main.yml
+    - include: roles/ogs/tasks/workers_postinstall.yml

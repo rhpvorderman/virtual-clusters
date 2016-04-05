@@ -4,8 +4,6 @@ ogs_uid: 1500
 ogs_gid: 1500
 ogs_group: ogs
 ogs_admin_user: ogs-admin
-#ogs_admin_private_key: /home/bow/devel/projects/main/ansible-role-sge/role-ogs/files/ogs-admin_rsa
-#ogs_admin_public_key: /home/bow/devel/projects/main/ansible-role-sge/role-ogs/files/ogs-admin_rsa.pub
 ogs_admin_private_key: files/ogs-admin_rsa
 ogs_admin_public_key: files/ogs-admin_rsa.pub
 ogs_version: GE2011.11p1
@@ -20,10 +18,12 @@ ogs_qmaster_spool_dir: "/nfs/ogs/default/spool/master"
 ogs_execd_spool_dir: "/nfs/ogs/default/spool/execd"
 ogs_gid_range: "800000-10000000"
 ogs_db_spooling_dir: "/tmp/data/spooldb"
-ogs_admin_host_list: ["ogs-head"]
+ogs_add_to_rc: "true"
+ogs_schedd_conf: "2"
+ogs_admin_host_list: ["ogs-head", "ogs-worker01", "ogs-worker02"]
 ogs_submit_host_list: ["ogs-head"]
 ogs_exec_host_list: ["ogs-worker01", "ogs-worker02"]
 ogs_execd_spool_dir_local: ""
 ogs_default_domain: "virtual-ogs"
 ogs_shadow_host: ""
-ogs_exec_host_list_rm: ""
+ogs_exec_host_list_rm: ["ogs-worker01", "ogs-worker02"]
