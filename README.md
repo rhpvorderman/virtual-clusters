@@ -19,6 +19,12 @@ Virtual Clusters was made using the following tools:
   * Vagrant v1.8.1, with vagrant-hosts plugin v2.7.1
   * Ansible v2.0.1.0
 
+You can install a specific version of the `vagrant-hosts` plugin (in our case version 2.7.1) using the `vagrant install` subcommand:
+
+    $ vagrant plugin install --plugin-version 2.7.1 vagrant-hosts
+
+Newer plugin versions may work, but they have not been tested yet.
+
 
 ## Usage
 
