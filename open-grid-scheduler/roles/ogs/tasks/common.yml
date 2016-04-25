@@ -44,6 +44,12 @@
     shell=/bin/bash
     state=present
 
+- name: set sudoers template into place, after passing validation with visudo
+  template:
+    src: templates/sudoers
+    dest: /etc/sudoers
+    validate: 'visudo -cf %s'
+
 - name: ensure user SSH directory exists
   file: path="/home/{{ ogs_admin_user }}/.ssh" state=directory owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0755
 
@@ -52,6 +58,9 @@
 
 - name: copy SSH public key
   copy: src="{{ ogs_admin_public_key }}" dest="/home/{{ ogs_admin_user }}/.ssh/id_rsa.pub" owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0644
+
+- name: copy SSH public key to authorized_keys
+  copy: src="{{ ogs_admin_public_key }}" dest="/home/{{ ogs_admin_user }}/.ssh/authorized_keys" owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0644
 
 - name: set known hosts
   template: src=templates/known_hosts.j2 dest="/home/{{ ogs_admin_user }}/.ssh/known_hosts" owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0644
