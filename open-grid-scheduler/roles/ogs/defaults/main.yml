@@ -8,7 +8,7 @@ ogs_admin_private_key: files/ogs-admin_rsa
 ogs_admin_public_key: files/ogs-admin_rsa.pub
 ogs_version: GE2011.11p1
 nfs_exports:
-  - "/nfs/ogs *(rw,sync,no_subtree_check)"
+  - "/nfs/ogs *(rw,sync,no_subtree_check,no_root_squash)"
 
 ogs_sge_root: /nfs/ogs
 ogs_sge_qmaster_port: 6444
