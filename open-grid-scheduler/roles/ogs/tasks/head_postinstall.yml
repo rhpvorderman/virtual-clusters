@@ -17,3 +17,8 @@
   environment:
     SGE_ROOT: /nfs/ogs
     SGE_ARCH: linux-x64
+
+- name: Create Shadow_masters template
+  template:
+    src: templates/shadow_masters.j2
+    dest: /nfs/ogs/default/common/shadow_masters
