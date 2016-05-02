@@ -17,3 +17,19 @@
   environment:
     SGE_ROOT: /nfs/ogs
     SGE_ARCH: linux-x64
+
+- name: Register if execd is running
+  stat: path=/nfs/ogs/default/spool/execd/{{ inventory_hostname }}/execd.pid
+  register: execd_pid
+  changed_when: False
+
+
+- name: Register if shadow daemon is running
+  stat: path=/nfs/ogs/default/spool/master/shadowd_{{ inventory_hostname }}.pid
+  register: shadowd_pid
+  changed_when: False
+
+- name: Start execd and or shadow daemon if pid does not exist
+  shell: /nfs/ogs/default/common/sgemaster
+  when:  (execd_pid.stat.exists == False) or
+         (shadowd_pid.stat.exists == False)
