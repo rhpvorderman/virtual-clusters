@@ -33,3 +33,9 @@
   tasks:
     - include_vars: roles/ogs/defaults/main.yml
     - include: roles/ogs/tasks/workers_postinstall.yml
+
+- hosts: all
+  become: yes
+  tasks:
+    - include_vars: roles/ogs/defaults/main.yml
+    - include: roles/ogs/tasks/common_postinstall.yml

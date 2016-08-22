@@ -1,0 +1,10 @@
+---
+
+# TODO: parse this from `nfs_exports` directly
+- name: ensure all items in shared mounts are correctly owned
+  command: find {{ item }} -exec chown {{ ogs_admin_user }}:{{ ogs_group }} {} \;
+  register: chmod_result
+  changed_when: "chmod_result.stdout != \"\""
+  with_items:
+    - /nfs/ogs
+    - /nfs/sandbox
