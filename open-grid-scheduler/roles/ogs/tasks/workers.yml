@@ -9,7 +9,13 @@
   authorized_key: user={{ ogs_admin_user }} key="{{ lookup('file', ogs_admin_public_key) }}"
 
 - name: ensure mount point for nfs exists
-  file: path=/nfs/ogs state=directory owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0755
+  file: path={{ item }} state=directory owner={{ ogs_admin_user }} group={{ ogs_group }} mode=0755
+  with_items:
+    - /nfs/ogs
+    - /nfs/sandbox
 
 - name: mount nfs
-  mount: name=/nfs/ogs fstype=nfs src="{{ hostvars[groups['head'][0]].ansible_eth1.ipv4.address }}:/nfs/ogs" state=mounted
+  mount: name={{ item }} fstype=nfs src="{{ hostvars[groups['head'][0]].ansible_eth1.ipv4.address }}:{{ item }}" state=mounted
+  with_items:
+    - /nfs/ogs
+    - /nfs/sandbox
