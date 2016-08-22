@@ -18,22 +18,22 @@
     SGE_ROOT: /nfs/ogs
     SGE_ARCH: linux-x64
 
-- name: Create Shadow_masters template
+- name: create Shadow_masters template
   template:
     src: templates/shadow_masters.j2
     dest: /nfs/ogs/default/common/shadow_masters
 
-- name: Register if qmaster is running
+- name: register if qmaster is running
   stat: path=/nfs/ogs/default/spool/master/qmaster.pid
   register: qmaster_pid
   changed_when: False
 
-- name: Register if shadow daemon is running
+- name: register if shadow daemon is running
   stat: path=/nfs/ogs/default/spool/master/shadowd_{{ inventory_hostname }}.pid
   register: shadowd_pid
   changed_when: False
 
-- name: Start qmaster and or shadow daemon if pid does not exist
+- name: start qmaster and or shadow daemon if pid does not exist
   shell: /nfs/ogs/default/common/sgemaster
   when: (qmaster_pid.stat.exists == False) or
         (shadowd_pid.stat.exists == False)
