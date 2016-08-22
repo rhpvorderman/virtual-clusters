@@ -69,3 +69,6 @@
   copy:
     src=files/ogs.sh
     dest=/etc/profile.d/ogs.sh
+
+- name: ensure ogs.sh is loaded in .bashrc
+  lineinfile: dest=/home/{{ ogs_admin_user }}/.bashrc line="source /etc/profile.d/ogs.sh 2> /dev/null"
