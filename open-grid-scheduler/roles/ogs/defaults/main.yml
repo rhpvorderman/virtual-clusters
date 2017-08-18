@@ -8,20 +8,11 @@ ogs_admin_private_key: files/ogs-admin_rsa
 ogs_admin_public_key: files/ogs-admin_rsa.pub
 ogs_version: GE2011.11p1
 nfs_exports:
-  - "/nfs/ogs *(rw,sync,no_subtree_check,no_root_squash)"
-  - "/nfs/sandbox *(rw,sync,no_subtree_check,no_root_squash)"
-nfs_exports:
   - path: "/nfs/ogs"
     options: "*(rw,sync,no_subtree_check,no_root_squash)"
   - path: "/nfs/sandbox"
     options: "*(rw,sync,no_subtree_check,no_root_squash)"
 nfs_extra_exports: []
-#ogs_external_submit_hosts:
-#  - hostname: "external_host"
-#    ip_address: 10.0.0.10
-#ogs_extra_users:
-#  - uid: 1300
-#    name: "extra"
 ogs_sge_root: /nfs/ogs
 ogs_sge_qmaster_port: 6444
 ogs_sge_execd_port: 6445
