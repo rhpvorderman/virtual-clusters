@@ -82,7 +82,7 @@
 
 - name: copy extra configuration files
   copy:
-    scr: "{{ item.src }}"
+    src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: "{{ item.owner | default(omit) }}"
     group: "{{ item.group | default(omit) }}"
