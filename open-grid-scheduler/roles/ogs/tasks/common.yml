@@ -38,6 +38,7 @@
     update_cache: yes
     cache_valid_time: 3600
   with_items: "{{ ogs_extra_packages }}"
+  when: ogs_extra_packages is defined
 
 - name: add user group
   group:
@@ -98,6 +99,7 @@
     module_arguments: "{{ item.module_arguments | default(omit) }}"
     state: "{{ item.state | default(omit) }}"
   with_items: "{{ ogs_pam_modules }}"
+  when: ogs_pam_modules is defined
 
 - name: restart services
   service:
