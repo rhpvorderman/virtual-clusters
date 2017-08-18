@@ -30,6 +30,15 @@
     - texinfo=4.13a.dfsg.1-10
     - openjdk-7-jdk
 
+- name: install extra packages
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    force: yes
+    update_cache: yes
+    cache_valid_time: 3600
+  with_items: "{{ ogs_extra_packages }}"
+
 - name: add user group
   group:
     name={{ ogs_group }}
@@ -69,6 +78,33 @@
   copy:
     src=files/ogs.sh
     dest=/etc/profile.d/ogs.sh
+
+- name: copy extra configuration files
+  copy:
+    scr: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner | default(omit) }}"
+    group: "{{ item.group | default(omit) }}"
+    mode: "{{ item.mode | default(omit) }}"
+  with_items: "{{ ogs_extra_config_files }}"
+  when: ogs_extra_config_files is defined
+
+- name: configure pam modules
+  pamd:
+    module_path: "{{ item.module_path }}"
+    name: "{{ item.name }}"
+    control: "{{ item.control }}"
+    type: "{{ item.type }}"
+    module_arguments: "{{ item.module_arguments | default(omit) }}"
+    state: "{{ item.state | default(omit) }}"
+  with_items: "{{ ogs_pam_modules }}"
+
+- name: restart services
+  service:
+    name: "{{ item }}"
+    state: restarted
+  with_items: "{{ ogs_extra_services }}"
+  when: ogs_extra_services is defined
 
 - name: ensure ogs.sh is loaded in .bashrc
   lineinfile: dest=/home/{{ ogs_admin_user }}/.bashrc line="source /etc/profile.d/ogs.sh 2> /dev/null"
