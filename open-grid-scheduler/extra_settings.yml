@@ -1,0 +1,15 @@
+# Extra vatiables for starting up the OGS cluster.
+
+#nfs_extra_exports:  # A list of dictionaries that sets the path for extra shared folders on the cluster
+#  - path: "/exports"
+#    options: "*(rw,sync,no_subtree_check,no_root_squash)" #options for nfs
+
+#ogs_external_submit_hosts: # A list of dictionaries that sets external submit hosts
+#  - hostname: "external_host"
+#    ip_address: "10.0.0.10"
+#  - hostname: "another_external_host"
+#    ip_address: "10.0.0.20"
+
+#ogs_extra_users: # A list of dictionaries that sets users on the cluster with a certain uid.
+#  - uid: "1300"
+#    name: "extra"
