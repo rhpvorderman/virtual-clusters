@@ -22,6 +22,6 @@
   mount:
     name: "{{ item.path }}"
     fstype: nfs
-    src: "{{ hostvars[groups['head'][0]].ansible_eth1.ipv4.address }}:{{ item }}"
+    src: "{{ hostvars[groups['head'][0]].ansible_eth1.ipv4.address }}:{{ item.path }}"
     state: mounted
   with_items: "{{nfs_exports}} + {{nfs_extra_exports}}"
