@@ -7,8 +7,9 @@
     - nfs-kernel-server
 
 - name: ensure export directories exist
-  file: path="{{ item.path }}"
-  state: directory
+  file:
+    path: "{{ item.path }}"
+    state: directory
   with_items: "{{ nfs_exports }}"
   notify: restart nfs
 
