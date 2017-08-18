@@ -85,26 +85,26 @@ Vagrant.configure(VAGRANTFILE_API) do |config|
             "workers" => (1..N).map { |w| get_worker_name(w) }
           }
           # Extra variables for extra nfs_exports, extra users and extra submit hosts
-          ansible.extra_vars = {
-            nfs_extra_exports: [
-              {
-                path: "/exports",
-                options: "*(rw,sync,no_subtree_check,no_root_squash)"
-              }
-            ],
-            ogs_external_submit_hosts:[
-              {
-                hostname: "external_host",
-                ip_address: "10.0.0.10"
-              }
-            ],
-            ogs_extra_users:[
-              {
-                uid: "1300",
-                name: "extra"
-              }
-            ],
-          }
+          #ansible.extra_vars = {
+          #  nfs_extra_exports: [
+          #    {
+          #      path: "/exports",
+          #      options: "*(rw,sync,no_subtree_check,no_root_squash)"
+          #    }
+          #  ],
+          #  ogs_external_submit_hosts:[
+          #    {
+          #      hostname: "external_host",
+          #      ip_address: "10.0.0.10"
+          #    }
+          #  ],
+          #  ogs_extra_users:[
+          #    {
+          #      uid: "1300",
+          #      name: "extra"
+          #    }
+          #  ],
+          #}
         end
       end
     end
