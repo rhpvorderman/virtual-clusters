@@ -25,7 +25,7 @@
 #ogs_extra_config_files:
 #  - src: files/ansible_config
 #    dest: /etc/ansible/ansible.cfg
-#    mode: 0644 #Octal numbers should always start with a zero
+#    mode: "0644" #Octal numbers should always start with a zero and be quoted
 #    owner: root
 #    group: root
 #  - src: files/extra_cow
