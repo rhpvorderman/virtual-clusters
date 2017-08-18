@@ -5,28 +5,28 @@
   command: find {{ item.path }} -exec chown {{ ogs_admin_user }}:{{ ogs_group }} {} \;
   register: chmod_result
   changed_when: "chmod_result.stdout != \"\""
-  with_items: "{{nfs_exports}} + {{nfs_extra_exports}}"
+  with_items: "{{ nfs_exports }} + {{ nfs_extra_exports }}"
 
 - name: Create extra users for job submission
   user:
-    uid: "{{item.uid}}"
-    name: "{{item.name}}"
+    uid: "{{ item.uid }}"
+    name: "{{ item.name }}"
     state: present
-  with_items: "{{ogs_extra_users}}"
+  with_items: "{{ ogs_extra_users }}"
   when: ogs_extra_users is defined
 
 - name: Add external submit hosts to /etc/hosts
   lineinfile:
-    line: "{{item.ip_address}} {{item.hostname}}"
+    line: "{{ item.ip_address }} {{ item.hostname}}"
     name: "/etc/hosts"
-  with_items: "{{ogs_external_submit_hosts}}"
+  with_items: "{{ ogs_external_submit_hosts }}"
   when: ogs_external_submit_hosts is defined
 
 - name: Add external submit hosts
-  command: "{{ogs_sge_root}}/bin/linux-x64/qconf -as {{item.hostname}}"
+  command: "{{ ogs_sge_root }}/bin/linux-x64/qconf -as {{ item.hostname }}"
   become: yes
   become_user: ogs-admin
   environment:
-    SGE_ROOT: "{{ogs_sge_root}}"
-  with_items: "{{ogs_external_submit_hosts}}"
+    SGE_ROOT: "{{ ogs_sge_root }}"
+  with_items: "{{ ogs_external_submit_hosts }}"
   when: ogs_external_submit_hosts is defined

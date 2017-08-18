@@ -10,7 +10,7 @@
   file:
     path: "{{ item.path }}"
     state: directory
-  with_items: "{{ nfs_exports }} + {{nfs_extra_exports}}"
+  with_items: "{{ nfs_exports }} + {{ nfs_extra_exports }}"
   notify: restart nfs
 
 - name: copy exports file
