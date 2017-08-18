@@ -85,7 +85,7 @@ Vagrant.configure(VAGRANTFILE_API) do |config|
             "workers" => (1..N).map { |w| get_worker_name(w) }
           }
           # Extra variables for extra nfs_exports, extra users and extra submit hosts
-          #ansible.extra_vars = {
+          ansible.extra_vars = YAML.load_file('extra_settings.yml')
           #  nfs_extra_exports: [
           #    {
           #      path: "/exports",
