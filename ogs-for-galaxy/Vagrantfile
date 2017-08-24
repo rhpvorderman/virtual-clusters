@@ -1,1 +1,95 @@
-../open-grid-scheduler/Vagrantfile
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API = 2
+
+# Common config values
+BASE_VM_NAME = "ogs"
+BASE_VM_IP = "192.168.99"
+
+# Config values for the head node
+IP = ENV["OGS_IP"] || "%s.%s" % [BASE_VM_IP, 100]
+MEM = ENV["OGS_MEM"] || "1024"
+CPU = ENV["OGS_CPU"] || "2"
+
+# Config values for the worker nodes
+NWORKERS = ENV["OGS_NWORKERS"] || "2"
+WORKER_MEM = ENV["OGS_WORKER_MEM"] || "512"
+WORKER_CPU = ENV["OGS_WORKER_CPU"] || "1"
+
+# Helper function for creating the head node name
+def get_head_name()
+    BASE_VM_NAME + "-head"
+end
+
+def get_worker_name(n)
+    BASE_VM_NAME + "-worker" + n.to_s.rjust(2, "0")
+end
+
+Vagrant.configure(VAGRANTFILE_API) do |config|
+
+  # We use Debian 8 64bit as the base image.
+  config.vm.box = "debian/jessie64"
+
+  # Default head node hostname.
+  config.vm.hostname = get_head_name()
+
+  # Disable shared folder.
+  config.vm.synced_folder ".", "/vagrant", :disabled => true
+
+  # Disable automatic keypair insertion.
+  config.ssh.insert_key = false
+
+  # Set up head node
+  head_name = get_head_name()
+  config.vm.define head_name do |head|
+    head.vm.provision :hosts, :sync_hosts => true, :add_localhost_hostnames => false
+    head.vm.hostname = head_name
+    head.vm.network "private_network", ip: IP
+    head.vm.network "forwarded_port", guest: 22, host: 2210, id: 'ssh'
+    head.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.name = head_name
+      vb.customize ["modifyvm", :id, "--memory", MEM.to_i]
+      vb.customize ["modifyvm", :id, "--cpus", CPU.to_i]
+    end
+    head.vm.define head_name do |t|
+    end
+  end
+
+  # And do the same thing for all worker nodes
+  N = [1, NWORKERS.to_i].max
+  (1..N).each do |n|
+    worker_name = get_worker_name(n)
+    config.vm.define worker_name do |worker|
+      worker.vm.provision :hosts, :sync_hosts => true, :add_localhost_hostnames => false
+      worker.vm.hostname = worker_name
+      worker.vm.network "private_network", ip: BASE_VM_IP + "." + (100 + n).to_s
+      worker.vm.network "forwarded_port", guest: 22, host: (2210 + n).to_i, id: 'ssh'
+      worker.vm.provider "virtualbox" do |vb|
+        vb.gui = false
+        vb.name = worker_name
+        vb.customize ["modifyvm", :id, "--memory", WORKER_MEM.to_i]
+        vb.customize ["modifyvm", :id, "--cpus", WORKER_CPU.to_i]
+      end
+      worker.vm.define worker_name do |t|
+      end
+
+      # Set up provisioning once when all nodes have been setup
+      # https://www.vagrantup.com/docs/provisioning/ansible.html
+      if n == N
+        worker.vm.provision "ansible" do |ansible|
+          ansible.limit = "all"
+          ansible.playbook = "provision.yml"
+          ansible.host_key_checking = false
+          ansible.groups = {
+            "head"    => [head_name],
+            "workers" => (1..N).map { |w| get_worker_name(w) }
+          }
+          # Extra variables can be added by editing the extra_settings.yml file
+          ansible.extra_vars = YAML.load_file('extra_settings.yml')
+        end
+      end
+    end
+  end
+end
