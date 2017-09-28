@@ -2,7 +2,8 @@
 # vi: set ft=ruby :
 
 VAGRANTFILE_API = 2
-
+VAGRANT_ROOT = File.dirname(__FILE__)
+EXTRA_SETTINGS = File.join(VAGRANT_ROOT, 'extra_settings.yml')
 # Common config values
 BASE_VM_NAME = "ogs"
 BASE_VM_IP = "192.168.99"
@@ -46,6 +47,7 @@ Vagrant.configure(VAGRANTFILE_API) do |config|
     head.vm.provision :hosts, :sync_hosts => true, :add_localhost_hostnames => false
     head.vm.hostname = head_name
     head.vm.network "private_network", ip: IP
+    head.vm.network "forwarded_port", guest: 22, host: 2210, id: 'ssh'
     head.vm.provider "virtualbox" do |vb|
       vb.gui = false
       vb.name = head_name
@@ -64,6 +66,7 @@ Vagrant.configure(VAGRANTFILE_API) do |config|
       worker.vm.provision :hosts, :sync_hosts => true, :add_localhost_hostnames => false
       worker.vm.hostname = worker_name
       worker.vm.network "private_network", ip: BASE_VM_IP + "." + (100 + n).to_s
+      worker.vm.network "forwarded_port", guest: 22, host: (2210 + n).to_i, id: 'ssh'
       worker.vm.provider "virtualbox" do |vb|
         vb.gui = false
         vb.name = worker_name
@@ -85,7 +88,7 @@ Vagrant.configure(VAGRANTFILE_API) do |config|
             "workers" => (1..N).map { |w| get_worker_name(w) }
           }
           # Extra variables can be added by editing the extra_settings.yml file
-          ansible.extra_vars = YAML.load_file('extra_settings.yml')
+          ansible.extra_vars = YAML.load_file(EXTRA_SETTINGS)
         end
       end
     end
