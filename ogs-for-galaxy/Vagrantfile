@@ -2,7 +2,8 @@
 # vi: set ft=ruby :
 
 VAGRANTFILE_API = 2
-
+VAGRANT_ROOT = File.dirname(__FILE__)
+EXTRA_SETTINGS = File.join(VAGRANT_ROOT, 'extra_settings.yml')
 # Common config values
 BASE_VM_NAME = "ogs"
 BASE_VM_IP = "192.168.99"
@@ -87,7 +88,7 @@ Vagrant.configure(VAGRANTFILE_API) do |config|
             "workers" => (1..N).map { |w| get_worker_name(w) }
           }
           # Extra variables can be added by editing the extra_settings.yml file
-          ansible.extra_vars = YAML.load_file('extra_settings.yml')
+          ansible.extra_vars = YAML.load_file(EXTRA_SETTINGS)
         end
       end
     end
