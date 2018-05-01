@@ -12,7 +12,7 @@ ogs_external_submit_hosts: # A list of dictionaries that sets external submit ho
 
 ogs_extra_users: # A list of dictionaries that sets users on the cluster with a certain uid.
   - uid: "1450"
-    name: "galaxy"
+    name: "galaxy_web"
   - uid: "1550"
     name: "postgres"
 #ogs_extra_packages: # A list of debian apt packages that will be installed on the cluster
